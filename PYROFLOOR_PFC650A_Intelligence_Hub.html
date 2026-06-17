@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PYROFLOOR® PFC 650 A — Intelligence Hub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap');
+
+  :root {
+    --ember: #E8470A;
+    --ember-dim: #8C2A05;
+    --forge: #1A0F06;
+    --iron: #2D1F14;
+    --steel: #3F3029;
+    --ash: #8A7A6E;
+    --chalk: #EDE8E3;
+    --white: #FAF9F7;
+    --gold: #C98B1A;
+    --gold-dim: #7A5210;
+    --cyan: #1FA7B8;
+    --green: #2BB87A;
+    --red: #D94040;
+    --amber: #E0952A;
+    --panel-bg: rgba(45,31,20,0.92);
+    --border: rgba(232,71,10,0.22);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--forge);
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── HEADER ─────────────────────────────────── */
+  header {
+    position: relative;
+    background: linear-gradient(135deg, #0D0601 0%, #1A0F06 40%, #2D1501 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    overflow: hidden;
+  }
+  .heat-bar {
+    height: 3px;
+    background: linear-gradient(90deg, #E8470A 0%, #C98B1A 50%, #E8470A 100%);
+    background-size: 200% 100%;
+    animation: heatFlow 3s ease-in-out infinite;
+  }
+  @keyframes heatFlow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+  .header-inner {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+  .logo-block { display:flex; align-items:center; gap:16px; }
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: radial-gradient(circle at 40% 35%, #E8470A, #8C2A05);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 0 24px rgba(232,71,10,0.5);
+    flex-shrink: 0;
+  }
+  .logo-text h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 500;
+    color: var(--white); letter-spacing: 0.08em;
+  }
+  .logo-text p {
+    font-size: 11px; color: var(--ash); letter-spacing: 0.12em;
+    text-transform: uppercase; margin-top: 2px;
+  }
+  .header-meta {
+    display: flex; gap: 24px; align-items: center;
+  }
+  .meta-chip {
+    background: rgba(232,71,10,0.12);
+    border: 1px solid rgba(232,71,10,0.3);
+    border-radius: 6px; padding: 6px 14px;
+    font-size: 11px; color: var(--ember);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.06em;
+  }
+
+  /* ─── NAV ─────────────────────────────────────── */
+  nav {
+    background: var(--iron);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-inner {
+    max-width: 1440px; margin: 0 auto;
+    display: flex; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-inner::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 0 22px; height: 50px;
+    font-size: 12px; font-weight: 500;
+    color: var(--ash); letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s; white-space: nowrap;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+  }
+  .nav-btn:hover { color: var(--chalk); }
+  .nav-btn.active {
+    color: var(--ember);
+    border-bottom-color: var(--ember);
+    background: rgba(232,71,10,0.06);
+  }
+  .nav-btn .nav-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: var(--ember);
+    margin-right: 6px; opacity: 0.6;
+  }
+
+  /* ─── MAIN LAYOUT ─────────────────────────────── */
+  main { max-width: 1440px; margin: 0 auto; padding: 32px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ─── SECTION HERO ────────────────────────────── */
+  .section-hero {
+    display: flex; align-items: flex-start;
+    gap: 20px; margin-bottom: 32px;
+  }
+  .section-icon {
+    width: 48px; height: 48px; flex-shrink: 0;
+    background: rgba(232,71,10,0.15);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .section-title h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; font-weight: 700;
+    color: var(--white); line-height: 1.1;
+  }
+  .section-title p { font-size: 13px; color: var(--ash); margin-top: 4px; line-height: 1.5; }
+
+  /* ─── GRID ────────────────────────────────────── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* ─── CARDS ───────────────────────────────────── */
+  .card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ember), transparent);
+    opacity: 0.4;
+  }
+  .card-title {
+    font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--ash);
+    margin-bottom: 16px; font-weight: 600;
+  }
+  .card-title span { color: var(--ember); margin-right: 6px; }
+
+  /* ─── STAT TILES ──────────────────────────────── */
+  .stat-tile {
+    background: rgba(26,15,6,0.6);
+    border: 1px solid rgba(232,71,10,0.15);
+    border-radius: 10px; padding: 18px 20px;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 26px; font-weight: 500;
+    color: var(--gold); line-height: 1;
+  }
+  .stat-unit { font-size: 11px; color: var(--ash); margin-top: 2px; }
+  .stat-label { font-size: 12px; color: var(--chalk); margin-top: 8px; font-weight: 500; }
+
+  /* ─── SYSTEM DIAGRAM ──────────────────────────── */
+  .diagram-wrap {
+    background: rgba(13,6,1,0.7);
+    border: 1px solid var(--border);
+    border-radius: 12px; padding: 28px;
+    position: relative;
+  }
+  .diagram-svg { width: 100%; height: auto; }
+
+  /* ─── SUBSYSTEM CARDS ─────────────────────────── */
+  .subsys-card {
+    background: rgba(26,15,6,0.8);
+    border: 1px solid rgba(232,71,10,0.2);
+    border-radius: 10px; padding: 18px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .subsys-card:hover {
+    border-color: var(--ember);
+    background: rgba(232,71,10,0.1);
+    transform: translateY(-2px);
+  }
+  .subsys-card.expanded { border-color: var(--ember); background: rgba(232,71,10,0.08); }
+  .subsys-header { display: flex; align-items: center; gap: 12px; }
+  .subsys-icon { font-size: 22px; }
+  .subsys-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .subsys-role { font-size: 11px; color: var(--ash); margin-top: 2px; }
+  .subsys-body {
+    display: none; margin-top: 14px;
+    border-top: 1px solid var(--border); padding-top: 14px;
+  }
+  .subsys-body.open { display: block; }
+  .subsys-body p { font-size: 13px; color: var(--chalk); line-height: 1.7; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag {
+    background: rgba(201,139,26,0.15); border: 1px solid rgba(201,139,26,0.3);
+    color: var(--gold); border-radius: 4px; padding: 3px 9px; font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tag.blue { background: rgba(31,167,184,0.12); border-color: rgba(31,167,184,0.3); color: var(--cyan); }
+  .tag.green { background: rgba(43,184,122,0.12); border-color: rgba(43,184,122,0.3); color: var(--green); }
+
+  /* ─── FAULT CARDS ─────────────────────────────── */
+  .fault-card {
+    background: rgba(26,15,6,0.85);
+    border-left: 4px solid var(--red);
+    border-radius: 0 10px 10px 0;
+    border-top: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 14px; overflow: hidden;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .fault-card.severity-critical { border-left-color: #D94040; }
+  .fault-card.severity-high { border-left-color: #E0952A; }
+  .fault-card.severity-medium { border-left-color: #C98B1A; }
+  .fault-card.severity-low { border-left-color: #2BB87A; }
+  .fault-header { padding: 16px 20px; display: flex; align-items: center; gap: 14px; }
+  .fault-sev {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .sev-c { background: rgba(217,64,64,0.2); color: #D94040; border: 1px solid #D94040; }
+  .sev-h { background: rgba(224,149,42,0.2); color: #E0952A; border: 1px solid #E0952A; }
+  .sev-m { background: rgba(201,139,26,0.2); color: #C98B1A; border: 1px solid #C98B1A; }
+  .sev-l { background: rgba(43,184,122,0.2); color: #2BB87A; border: 1px solid #2BB87A; }
+  .fault-title { flex: 1; }
+  .fault-title h4 { font-size: 14px; font-weight: 600; color: var(--white); }
+  .fault-title p { font-size: 11px; color: var(--ash); margin-top: 2px; }
+  .fault-arrow { color: var(--ash); transition: transform 0.2s; font-size: 14px; }
+  .fault-card.open .fault-arrow { transform: rotate(90deg); color: var(--ember); }
+  .fault-body {
+    display: none; padding: 0 20px 20px;
+  }
+  .fault-card.open .fault-body { display: block; }
+  .fault-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 4px; }
+  .fault-section-label {
+    font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--ember); font-weight: 600; margin-bottom: 8px;
+  }
+  .fault-list { list-style: none; }
+  .fault-list li {
+    font-size: 12px; color: var(--chalk); padding: 4px 0;
+    padding-left: 14px; position: relative; line-height: 1.5;
+  }
+  .fault-list li::before {
+    content: '▸'; position: absolute; left: 0;
+    color: var(--ember); font-size: 10px;
+  }
+
+  /* ─── RPM MATRIX ──────────────────────────────── */
+  .rpm-container { overflow-x: auto; }
+  .rpm-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px;
+  }
+  .rpm-table th {
+    background: rgba(26,15,6,0.9);
+    color: var(--ash); text-transform: uppercase;
+    letter-spacing: 0.08em; font-size: 10px;
+    padding: 10px 14px; text-align: left;
+    border-bottom: 2px solid var(--ember);
+    white-space: nowrap;
+  }
+  .rpm-table td {
+    padding: 10px 14px; border-bottom: 1px solid rgba(232,71,10,0.1);
+    color: var(--chalk); vertical-align: top; line-height: 1.5;
+  }
+  .rpm-table tr:hover td { background: rgba(232,71,10,0.05); }
+  .rpm-cell { text-align: center; }
+  .rpm-val {
+    display: inline-block; width: 30px; height: 30px;
+    border-radius: 6px; line-height: 30px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700;
+    margin: auto;
+  }
+  .rpm-v1 { background: rgba(43,184,122,0.2); color: #2BB87A; border: 1px solid #2BB87A; }
+  .rpm-v2 { background: rgba(201,139,26,0.2); color: #C98B1A; border: 1px solid #C98B1A; }
+  .rpm-v3 { background: rgba(224,149,42,0.25); color: #E0952A; border: 1px solid #E0952A; }
+  .rpm-v4 { background: rgba(217,64,64,0.2); color: #D94040; border: 1px solid #D94040; }
+  .rpm-legend {
+    display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap;
+  }
+  .rpm-leg-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--ash); }
+  .rpm-leg-dot { width: 14px; height: 14px; border-radius: 3px; }
+
+  /* ─── PM TIMELINE ─────────────────────────────── */
+  .pm-timeline { position: relative; padding-left: 28px; }
+  .pm-timeline::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(to bottom, var(--ember), var(--iron));
+    border-radius: 2px;
+  }
+  .pm-block {
+    position: relative; margin-bottom: 28px;
+  }
+  .pm-block::before {
+    content: ''; position: absolute; left: -32px; top: 6px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--ember); border: 2px solid var(--forge);
+    box-shadow: 0 0 8px rgba(232,71,10,0.5);
+  }
+  .pm-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--ember); letter-spacing: 0.1em;
+    text-transform: uppercase; font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .pm-card {
+    background: rgba(26,15,6,0.7);
+    border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px;
+  }
+  .pm-card h4 { font-size: 14px; color: var(--white); margin-bottom: 10px; }
+  .pm-items { display: flex; flex-direction: column; gap: 6px; }
+  .pm-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 12px; color: var(--chalk); line-height: 1.5;
+  }
+  .pm-item-icon { color: var(--gold); flex-shrink: 0; font-size: 12px; margin-top: 1px; }
+
+  /* ─── EFFICIENCY ──────────────────────────────── */
+  .eff-card {
+    background: rgba(26,15,6,0.7);
+    border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+    display: flex; gap: 16px; align-items: flex-start;
+  }
+  .eff-icon {
+    width: 40px; height: 40px; flex-shrink: 0; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 18px;
+  }
+  .eff-icon.orange { background: rgba(232,71,10,0.15); border: 1px solid rgba(232,71,10,0.3); }
+  .eff-icon.cyan { background: rgba(31,167,184,0.12); border: 1px solid rgba(31,167,184,0.3); }
+  .eff-icon.green { background: rgba(43,184,122,0.12); border: 1px solid rgba(43,184,122,0.3); }
+  .eff-icon.gold { background: rgba(201,139,26,0.12); border: 1px solid rgba(201,139,26,0.3); }
+  .eff-body h4 { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 6px; }
+  .eff-body p { font-size: 12px; color: var(--ash); line-height: 1.65; }
+  .eff-body ul { list-style: none; margin-top: 8px; }
+  .eff-body ul li {
+    font-size: 12px; color: var(--chalk); padding: 3px 0;
+    padding-left: 16px; position: relative; line-height: 1.5;
+  }
+  .eff-body ul li::before { content: '→'; position: absolute; left: 0; color: var(--cyan); font-size: 10px; top: 5px; }
+
+  /* ─── BADGE ───────────────────────────────────── */
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+  }
+  .badge-red { background: rgba(217,64,64,0.2); color: #D94040; }
+  .badge-amber { background: rgba(224,149,42,0.2); color: #E0952A; }
+  .badge-green { background: rgba(43,184,122,0.2); color: #2BB87A; }
+
+  /* ─── FILTER ROW ──────────────────────────────── */
+  .filter-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn {
+    background: rgba(26,15,6,0.7); border: 1px solid var(--border);
+    border-radius: 6px; padding: 6px 14px; cursor: pointer;
+    font-size: 11px; color: var(--ash); transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: rgba(232,71,10,0.15); border-color: var(--ember); color: var(--ember);
+  }
+
+  /* ─── PROCESS FLOW ────────────────────────────── */
+  .flow-step {
+    background: rgba(26,15,6,0.7); border: 1px solid var(--border);
+    border-radius: 10px; padding: 16px 20px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .flow-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700;
+    color: var(--ember); flex-shrink: 0; line-height: 1; margin-top: 2px;
+    min-width: 32px;
+  }
+  .flow-content h4 { font-size: 14px; color: var(--white); margin-bottom: 6px; }
+  .flow-content p { font-size: 12px; color: var(--ash); line-height: 1.65; }
+  .flow-connector {
+    height: 24px; width: 2px; background: var(--border);
+    margin: 0 0 0 27px;
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────── */
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .col-span-2, .col-span-3 { grid-column: span 1; }
+    main { padding: 16px; }
+    .fault-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ─── SCROLLBAR ───────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--forge); }
+  ::-webkit-scrollbar-thumb { background: var(--steel); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ember); }
+
+  hr.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  .info-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 8px; }
+  .info-label { font-size: 11px; color: var(--ash); width: 140px; flex-shrink: 0; font-family: 'JetBrains Mono', monospace; }
+  .info-value { font-size: 12px; color: var(--chalk); }
+
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ opacity:1; } 50%{ opacity:0.5; } }
+</style>
+</head>
+<body>
+
+<div class="heat-bar"></div>
+<header>
+  <div class="header-inner">
+    <div class="logo-block">
+      <div class="logo-icon">🔥</div>
+      <div class="logo-text">
+        <h1>PYROFLOOR® PFC 650 A</h1>
+        <p>Humboldt Wedag · Katrana Cement Plant · 5000 t/d · Intelligence Hub</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="meta-chip">BA 841-5123</div>
+      <div class="meta-chip">PFCC v2.0</div>
+      <div class="meta-chip pulse" style="color:#2BB87A;border-color:#2BB87A;">● LIVE</div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showSection('overview')"><span class="nav-num">01</span>Overview</button>
+    <button class="nav-btn" onclick="showSection('system')"><span class="nav-num">02</span>System Architecture</button>
+    <button class="nav-btn" onclick="showSection('hydraulic')"><span class="nav-num">03</span>Hydraulic Drive</button>
+    <button class="nav-btn" onclick="showSection('faults')"><span class="nav-num">04</span>Fault Library</button>
+    <button class="nav-btn" onclick="showSection('risk')"><span class="nav-num">05</span>Risk Priority Matrix</button>
+    <button class="nav-btn" onclick="showSection('pm')"><span class="nav-num">06</span>PM Program</button>
+    <button class="nav-btn" onclick="showSection('efficiency')"><span class="nav-num">07</span>Efficiency Enhancement</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 01 OVERVIEW -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="overview" class="section active">
+  <div class="section-hero">
+    <div class="section-icon">📊</div>
+    <div class="section-title">
+      <h2>System Overview</h2>
+      <p>PYROFLOOR® clinker cooler — hydraulically driven walking floor grate technology. Katrana Cement, Project A.02.0754.1.001.</p>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-bottom:20px;">
+    <div class="stat-tile">
+      <div class="stat-value">5,000</div>
+      <div class="stat-unit">t/d</div>
+      <div class="stat-label">Rated Throughput</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">PFC 650 A</div>
+      <div class="stat-unit">model</div>
+      <div class="stat-label">Cooler Type</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">~1,400</div>
+      <div class="stat-unit">°C</div>
+      <div class="stat-label">Clinker Inlet Temp</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">≤ 65</div>
+      <div class="stat-unit">°C + Tambient</div>
+      <div class="stat-label">Target Clinker Outlet</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">800–1,000</div>
+      <div class="stat-unit">°C</div>
+      <div class="stat-label">Secondary / Tertiary Air</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">0–10</div>
+      <div class="stat-unit">str/min</div>
+      <div class="stat-label">Stroke Frequency</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">80–350</div>
+      <div class="stat-unit">mm</div>
+      <div class="stat-label">Stroke Length Range</div>
+    </div>
+    <div class="stat-tile">
+      <div class="stat-value">600–800</div>
+      <div class="stat-unit">mm</div>
+      <div class="stat-label">Clinker Bed Height</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title"><span>📋</span>Machine Identity</div>
+      <div class="info-row"><div class="info-label">Manufacturer</div><div class="info-value">Humboldt Wedag GmbH, Köln, Germany</div></div>
+      <div class="info-row"><div class="info-label">Type Designation</div><div class="info-value">PYROFLOOR® PFC 650 A with Roller Crusher</div></div>
+      <div class="info-row"><div class="info-label">Project Number</div><div class="info-value">A.02.0754.1.001</div></div>
+      <div class="info-row"><div class="info-label">Documentation</div><div class="info-value">BA 841-5123 en · Rev. Sept. 2008</div></div>
+      <div class="info-row"><div class="info-label">Control System</div><div class="info-value">PFCC v2.0 (IPC + PLC Hydraulic)</div></div>
+      <div class="info-row"><div class="info-label">Drive Principle</div><div class="info-value">Hydraulic, walking-floor thrust grate</div></div>
+      <div class="info-row"><div class="info-label">Aeration Principle</div><div class="info-value">Flow regulators (recuperation) + direct blowers</div></div>
+      <div class="info-row"><div class="info-label">Crusher Type</div><div class="info-value">Roller crusher (4 rollers, planetary gearboxes)</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span>⚡</span>Operating Envelope</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+        <div style="background:rgba(232,71,10,0.08);border-radius:8px;padding:12px 16px;">
+          <div style="font-size:11px;color:var(--ember);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Recuperation Zone Fans</div>
+          <div style="font-size:13px;color:var(--chalk);">Chambers 1–3 at <strong>85–90%</strong> volumetric capacity<br>Equipped with flow regulators (500–2,250 Nm³/h)</div>
+        </div>
+        <div style="background:rgba(201,139,26,0.08);border-radius:8px;padding:12px 16px;">
+          <div style="font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Cooling Zone Fans</div>
+          <div style="font-size:13px;color:var(--chalk);">Rear chambers at <strong>60–80%</strong> capacity<br>Direct aeration — no flow regulators</div>
+        </div>
+        <div style="background:rgba(31,167,184,0.08);border-radius:8px;padding:12px 16px;">
+          <div style="font-size:11px;color:var(--cyan);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Grate Plate Temperature Limits</div>
+          <div style="font-size:13px;color:var(--chalk);"><strong>Alarm</strong>: 150 °C &nbsp;|&nbsp; <strong>Shutdown</strong>: 250 °C</div>
+        </div>
+        <div style="background:rgba(43,184,122,0.08);border-radius:8px;padding:12px 16px;">
+          <div style="font-size:11px;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">Control Modes</div>
+          <div style="font-size:13px;color:var(--chalk);">Auto · Manual · Red River Combat (emergency)<br>Local lane override via Hydraulic PLC</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="card" style="margin-bottom:0;">
+    <div class="card-title"><span>🔄</span>Functional Principle — Transport Cycle</div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:8px;">
+      <div class="flow-step" style="flex:1;min-width:200px;">
+        <div class="flow-num">1</div>
+        <div class="flow-content">
+          <h4>Simultaneous Advance Stroke</h4>
+          <p>All grate lanes advance simultaneously — entire clinker bed moves toward the cooler discharge end.</p>
+        </div>
+      </div>
+      <div class="flow-step" style="flex:1;min-width:200px;">
+        <div class="flow-num">2</div>
+        <div class="flow-content">
+          <h4>Sequential Return Stroke</h4>
+          <p>Lanes divided into 3 groups; each group retracts individually. No two adjacent lanes withdraw simultaneously — static friction holds clinker in place.</p>
+        </div>
+      </div>
+      <div class="flow-step" style="flex:1;min-width:200px;">
+        <div class="flow-num">3</div>
+        <div class="flow-content">
+          <h4>Net Forward Transport</h4>
+          <p>The differential stroke produces a net clinker flow toward discharge. Flow regulators maintain constant aeration independent of bed depth variations.</p>
+        </div>
+      </div>
+      <div class="flow-step" style="flex:1;min-width:200px;">
+        <div class="flow-num">4</div>
+        <div class="flow-content">
+          <h4>Roller Crusher Discharge</h4>
+          <p>Cooled clinker falls onto 4-roller crusher. Fine fractions pass through; lumps are comminuted before clinker discharge transport.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 02 SYSTEM ARCHITECTURE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="system" class="section">
+  <div class="section-hero">
+    <div class="section-icon">🏗️</div>
+    <div class="section-title">
+      <h2>System Architecture</h2>
+      <p>Major sub-assemblies, control hierarchy, and sensing infrastructure of the PYROFLOOR® PFC 650 A.</p>
+    </div>
+  </div>
+
+  <!-- Architecture diagram -->
+  <div class="diagram-wrap" style="margin-bottom:24px;">
+    <div style="font-size:11px;color:var(--ash);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">System Integration Block Diagram</div>
+    <svg class="diagram-svg" viewBox="0 0 900 340" xmlns="http://www.w3.org/2000/svg" style="max-height:340px;">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#E8470A"/>
+        </marker>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- PCS -->
+      <rect x="350" y="10" width="200" height="50" rx="8" fill="#1A0F06" stroke="#C98B1A" stroke-width="1.5"/>
+      <text x="450" y="32" text-anchor="middle" fill="#C98B1A" font-family="JetBrains Mono" font-size="11" font-weight="500">PROCESS CONTROL SYSTEM</text>
+      <text x="450" y="48" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">PCS · OPC Ethernet Link</text>
+
+      <!-- PFCC -->
+      <rect x="350" y="100" width="200" height="50" rx="8" fill="#1A0F06" stroke="#E8470A" stroke-width="2" filter="url(#glow)"/>
+      <text x="450" y="122" text-anchor="middle" fill="#E8470A" font-family="JetBrains Mono" font-size="11" font-weight="700">PFCC CONTROLLER</text>
+      <text x="450" y="138" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">IPC + UPS · v2.0.0</text>
+
+      <!-- Hydraulic PLC -->
+      <rect x="620" y="100" width="180" height="50" rx="8" fill="#1A0F06" stroke="#1FA7B8" stroke-width="1.5"/>
+      <text x="710" y="122" text-anchor="middle" fill="#1FA7B8" font-family="JetBrains Mono" font-size="11" font-weight="500">HYDRAULIC PLC</text>
+      <text x="710" y="138" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Lane Motion Control</text>
+
+      <!-- Cooler Grates -->
+      <rect x="100" y="200" width="190" height="60" rx="8" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+      <text x="195" y="225" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="10">GRATE LANES (3–7)</text>
+      <text x="195" y="240" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Hydraulic Cylinders</text>
+      <text x="195" y="253" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Advance + Return Stroke</text>
+
+      <!-- Aeration -->
+      <rect x="350" y="200" width="200" height="60" rx="8" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+      <text x="450" y="225" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="10">AERATION SYSTEM</text>
+      <text x="450" y="240" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Flow Regulators + Blowers</text>
+      <text x="450" y="253" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">8 Compartments</text>
+
+      <!-- Sensors -->
+      <rect x="600" y="200" width="220" height="60" rx="8" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+      <text x="710" y="225" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="10">SENSING ARRAY</text>
+      <text x="710" y="240" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Radar · Temp · Pressure</text>
+      <text x="710" y="253" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">Per-lane + Per-chamber</text>
+
+      <!-- Crusher -->
+      <rect x="350" y="285" width="200" height="45" rx="8" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+      <text x="450" y="310" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="10">ROLLER CRUSHER</text>
+      <text x="450" y="323" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">4 Rollers · Planetary Drives</text>
+
+      <!-- Arrows -->
+      <line x1="450" y1="60" x2="450" y2="98" stroke="#E8470A" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="550" y1="125" x2="618" y2="125" stroke="#1FA7B8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="710" y1="150" x2="710" y2="198" stroke="#1FA7B8" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="350" y1="150" x2="195" y2="198" stroke="#E8470A" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="450" y1="150" x2="450" y2="198" stroke="#E8470A" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="550" y1="155" x2="645" y2="198" stroke="#E8470A" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="450" y1="260" x2="450" y2="283" stroke="#E8470A" stroke-width="1.5" marker-end="url(#arr)"/>
+    </svg>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px;">
+    <div>
+      <div class="card-title" style="margin-bottom:12px;"><span style="color:var(--ember);">⚙</span> MAJOR SUB-ASSEMBLIES — Click to Expand</div>
+      <div id="subsys-list"></div>
+    </div>
+    <div>
+      <div class="card-title" style="margin-bottom:12px;"><span style="color:var(--cyan);">📡</span> Sensing & Control Infrastructure</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div style="font-size:13px;color:var(--ember);font-weight:600;margin-bottom:10px;">Radar Sensors (Clinker Bed Height)</div>
+        <p style="font-size:12px;color:var(--ash);line-height:1.65;">Mounted via antenna extensions through the housing top section. Horn antenna protrudes into ceiling. Protection-air purge prevents dust fouling. Each lane in the inlet zone has a dedicated radar for real-time bed height feedback to PFCC.</p>
+        <div class="tag-row"><span class="tag blue">Per-lane</span><span class="tag blue">Inlet zone</span><span class="tag blue">OPC feed to PFCC</span></div>
+      </div>
+      <div class="card" style="margin-bottom:14px;">
+        <div style="font-size:13px;color:var(--gold);font-weight:600;margin-bottom:10px;">Temperature Sensors (Under-cassette)</div>
+        <p style="font-size:12px;color:var(--ash);line-height:1.65;">Mounted directly beneath angle sections welded into the cassette. Sensor surface must maintain permanent contact. Flexible sensor line allows for lane motion. Alarm at 150 °C, trip at 250 °C.</p>
+        <div class="tag-row"><span class="tag">Per-row per-lane</span><span class="tag">Flex cable routing</span></div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px;color:var(--green);font-weight:600;margin-bottom:10px;">Pressure Sensors (Sub-cassette)</div>
+        <p style="font-size:12px;color:var(--ash);line-height:1.65;">Measure chamber pressure (p1), sub-cassette (p2), and sub-clinker (p3). Combined evaluation infers bed height, granulometry, temperature, and cassette flow resistance — essential for aeration controller tuning.</p>
+        <div class="tag-row"><span class="tag green">p1 chamber</span><span class="tag green">p2 sub-cassette</span><span class="tag green">p3 sub-clinker</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 03 HYDRAULIC DRIVE -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="hydraulic" class="section">
+  <div class="section-hero">
+    <div class="section-icon">🔧</div>
+    <div class="section-title">
+      <h2>Hydraulic Drive System</h2>
+      <p>The hydraulic drive is the heart of the PYROFLOOR® motion system. Each lane has an independent hydraulic circuit controlled by the Hydraulic PLC.</p>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:20px;">
+    <div class="card col-span-2">
+      <div class="card-title"><span>💧</span>Hydraulic Circuit — Component Overview</div>
+      <svg viewBox="0 0 620 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-top:8px;">
+        <defs>
+          <marker id="arr2" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto">
+            <polygon points="0 0, 7 2.5, 0 5" fill="#1FA7B8"/>
+          </marker>
+        </defs>
+        <!-- Tank -->
+        <rect x="20" y="80" width="90" height="80" rx="6" fill="#1A0F06" stroke="#C98B1A" stroke-width="1.5"/>
+        <text x="65" y="115" text-anchor="middle" fill="#C98B1A" font-family="JetBrains Mono" font-size="10">TANK</text>
+        <text x="65" y="128" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="8">Hydraulic Oil</text>
+        <!-- Pump -->
+        <circle cx="175" cy="120" r="28" fill="#1A0F06" stroke="#E8470A" stroke-width="1.5"/>
+        <text x="175" y="117" text-anchor="middle" fill="#E8470A" font-family="JetBrains Mono" font-size="9">PUMP</text>
+        <text x="175" y="129" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="8">Motor+</text>
+        <!-- Valve block -->
+        <rect x="250" y="90" width="100" height="60" rx="6" fill="#1A0F06" stroke="#1FA7B8" stroke-width="1.5"/>
+        <text x="300" y="117" text-anchor="middle" fill="#1FA7B8" font-family="JetBrains Mono" font-size="9">VALVE</text>
+        <text x="300" y="129" text-anchor="middle" fill="#1FA7B8" font-family="JetBrains Mono" font-size="9">BLOCK</text>
+        <!-- Cylinders -->
+        <rect x="410" y="40" width="80" height="40" rx="4" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+        <text x="450" y="58" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="8">CYL LANE 1</text>
+        <text x="450" y="70" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="7">Way encoder</text>
+        <rect x="410" y="100" width="80" height="40" rx="4" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+        <text x="450" y="118" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="8">CYL LANE 2</text>
+        <text x="450" y="130" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="7">Way encoder</text>
+        <rect x="410" y="160" width="80" height="40" rx="4" fill="#1A0F06" stroke="#8A7A6E" stroke-width="1"/>
+        <text x="450" y="178" text-anchor="middle" fill="#EDE8E3" font-family="JetBrains Mono" font-size="8">CYL LANE N</text>
+        <text x="450" y="190" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="7">Way encoder</text>
+        <!-- Hydraulic PLC -->
+        <rect x="530" y="85" width="75" height="70" rx="6" fill="#1A0F06" stroke="#2BB87A" stroke-width="1.5"/>
+        <text x="567" y="115" text-anchor="middle" fill="#2BB87A" font-family="JetBrains Mono" font-size="9">HYD</text>
+        <text x="567" y="128" text-anchor="middle" fill="#2BB87A" font-family="JetBrains Mono" font-size="9">PLC</text>
+        <!-- Oil filter -->
+        <rect x="240" y="170" width="70" height="35" rx="4" fill="#1A0F06" stroke="#C98B1A" stroke-width="1"/>
+        <text x="275" y="186" text-anchor="middle" fill="#C98B1A" font-family="JetBrains Mono" font-size="8">OIL</text>
+        <text x="275" y="198" text-anchor="middle" fill="#C98B1A" font-family="JetBrains Mono" font-size="8">FILTER</text>
+        <!-- Lines -->
+        <line x1="110" y1="120" x2="147" y2="120" stroke="#1FA7B8" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="203" y1="120" x2="248" y2="120" stroke="#1FA7B8" stroke-width="1.5" marker-end="url(#arr2)"/>
+        <line x1="350" y1="100" x2="408" y2="60" stroke="#1FA7B8" stroke-width="1" marker-end="url(#arr2)"/>
+        <line x1="350" y1="120" x2="408" y2="120" stroke="#1FA7B8" stroke-width="1" marker-end="url(#arr2)"/>
+        <line x1="350" y1="140" x2="408" y2="178" stroke="#1FA7B8" stroke-width="1" marker-end="url(#arr2)"/>
+        <line x1="490" y1="60" x2="528" y2="100" stroke="#2BB87A" stroke-width="1" stroke-dasharray="4,2"/>
+        <line x1="490" y1="120" x2="528" y2="120" stroke="#2BB87A" stroke-width="1" stroke-dasharray="4,2"/>
+        <line x1="490" y1="178" x2="528" y2="143" stroke="#2BB87A" stroke-width="1" stroke-dasharray="4,2"/>
+        <!-- Return line -->
+        <path d="M 65 160 Q 65 210 175 210 Q 275 210 275 207" stroke="#C98B1A" stroke-width="1" fill="none" stroke-dasharray="3,3"/>
+        <text x="150" y="224" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="8">Return / drain</text>
+        <text x="165" y="15" text-anchor="middle" fill="#8A7A6E" font-family="JetBrains Mono" font-size="9">— — — signal/feedback    ——— pressure flow</text>
+      </svg>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px;height:auto;">
+        <div class="card-title"><span>⚠</span>Critical Hydraulic Parameters</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="info-row"><div class="info-label">Hydraulic Oil</div><div class="info-value">Mineral oil per OEM spec (see lube table)</div></div>
+          <div class="info-row"><div class="info-label">Oil Filter</div><div class="info-value">Check every 3 months</div></div>
+          <div class="info-row"><div class="info-label">Water content</div><div class="info-value">Analyse before commission (condensation risk)</div></div>
+          <div class="info-row"><div class="info-label">General inspection</div><div class="info-value">Every 2 years full overhaul</div></div>
+          <div class="info-row"><div class="info-label">Drive architecture</div><div class="info-value">Pull (not push) on grate lanes</div></div>
+          <div class="info-row"><div class="info-label">Way pick-ups</div><div class="info-value">Per cylinder — stroke length feedback</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🔁</span>Stroke Kinematics</div>
+        <p style="font-size:12px;color:var(--ash);line-height:1.65;">Forward stroke: all lanes advance simultaneously. Return stroke: sequential by group (3 groups, no adjacent lanes retract together). Return is faster than advance. Net effect: positive clinker transport with minimal back-transport.</p>
+        <div class="tag-row" style="margin-top:10px;">
+          <span class="tag">80–350 mm stroke</span>
+          <span class="tag">0–10 str/min</span>
+          <span class="tag blue">Group sequencing</span>
+          <span class="tag blue">Way-encoder feedback</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🔩</span>Flow Regulator — Pressure-Balancing Mechanism</div>
+    <div class="grid-3" style="margin-top:8px;">
+      <div>
+        <div style="font-size:12px;color:var(--ember);font-weight:600;margin-bottom:8px;">Components</div>
+        <ul class="fault-list">
+          <li>Housing with bandage and flanges (1)</li>
+          <li>Plate with guiding bush (2)</li>
+          <li>Axle — guides plate and spring (3)</li>
+          <li>Yoke — fixes axle and plate home position (6)</li>
+          <li>Helical spring, ~15 mm preload (5)</li>
+          <li>Cut-outs in bandage sized per flow rate</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--gold);font-weight:600;margin-bottom:8px;">Pressure Zones</div>
+        <ul class="fault-list">
+          <li><strong>p1</strong> — Chamber pressure (below flow regulator)</li>
+          <li><strong>p2</strong> — Pressure below cassette (above plate)</li>
+          <li><strong>p3</strong> — Pressure below clinker bed</li>
+          <li><strong>p4</strong> — Pressure above clinker bed</li>
+          <li>p1–p2 differential drives plate upward</li>
+          <li>Spring force limits and stabilises plate position</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--cyan);font-weight:600;margin-bottom:8px;">Self-Regulation Logic</div>
+        <ul class="fault-list">
+          <li>Bed height drops → p below bed decreases → plate rises</li>
+          <li>Spring compression increases → equilibrium restores flow</li>
+          <li>Working range: ~200 mm plate stroke</li>
+          <li>8 standard flow rates: 500–2,250 Nm³/h</li>
+          <li>Outside working range → flow becomes uncontrolled</li>
+          <li>Orifices limit peak flow on air-clinker fountain events</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 04 FAULT LIBRARY -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="faults" class="section">
+  <div class="section-hero">
+    <div class="section-icon">⚠️</div>
+    <div class="section-title">
+      <h2>Fault Library</h2>
+      <p>Comprehensive failure mode catalogue covering hydraulic, mechanical, thermal, and instrumentation sub-systems. Click any fault to expand root causes and corrective actions.</p>
+    </div>
+  </div>
+
+  <div class="filter-row" id="fault-filters">
+    <button class="filter-btn active" onclick="filterFaults('all',this)">All Systems</button>
+    <button class="filter-btn" onclick="filterFaults('hydraulic',this)">Hydraulic</button>
+    <button class="filter-btn" onclick="filterFaults('mechanical',this)">Mechanical</button>
+    <button class="filter-btn" onclick="filterFaults('thermal',this)">Thermal</button>
+    <button class="filter-btn" onclick="filterFaults('aeration',this)">Aeration</button>
+    <button class="filter-btn" onclick="filterFaults('crusher',this)">Crusher</button>
+    <button class="filter-btn" onclick="filterFaults('instrumentation',this)">Instrumentation</button>
+    <button class="filter-btn" onclick="filterFaults('refractory',this)">Refractory</button>
+  </div>
+
+  <div id="fault-library"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 05 RISK PRIORITY MATRIX -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="risk" class="section">
+  <div class="section-hero">
+    <div class="section-icon">📈</div>
+    <div class="section-title">
+      <h2>Risk Priority Matrix</h2>
+      <p>FMEA-based risk ranking. RPN = Severity × Occurrence × Detectability (1–10 scale each, max 1000). Colour-coded action zones.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div class="rpm-legend" style="margin-bottom:16px;">
+      <div class="rpm-leg-item"><div class="rpm-leg-dot" style="background:#2BB87A;"></div>RPN ≤ 100 — Monitor</div>
+      <div class="rpm-leg-item"><div class="rpm-leg-dot" style="background:#C98B1A;"></div>RPN 101–200 — Plan Action</div>
+      <div class="rpm-leg-item"><div class="rpm-leg-dot" style="background:#E0952A;"></div>RPN 201–400 — Priority Action</div>
+      <div class="rpm-leg-item"><div class="rpm-leg-dot" style="background:#D94040;"></div>RPN > 400 — Immediate Action</div>
+    </div>
+    <div class="rpm-container">
+      <table class="rpm-table" id="rpm-table"></table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 06 PM PROGRAM -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="pm" class="section">
+  <div class="section-hero">
+    <div class="section-icon">🗓️</div>
+    <div class="section-title">
+      <h2>Preventive Maintenance Program</h2>
+      <p>Structured PM schedule derived from OEM inspection list (BA 841-5123) and PFCC documentation, supplemented with reliability-centred best practices.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="pm-timeline" id="pm-timeline"></div>
+    <div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title"><span>🔑</span>Critical Maintenance Principles</div>
+        <ul class="fault-list">
+          <li>All grate works require LOTO — hydraulic main switches to zero, main fuse isolated, written countersigned permit</li>
+          <li>Welding directly on cooler structure is prohibited unless specified assembly welds</li>
+          <li>Welding current must never flow through bearings, cylinders, pumps, or control valves (arc damage)</li>
+          <li>Inspect hydraulic oil for water contamination before every restart after a long standstill (condensation)</li>
+          <li>After 50 operating hours (new plant): re-tighten all connection screws</li>
+          <li>After 200 operating hours: comprehensive check of screw unions, oil levels, cylinders, seals, interlockings</li>
+          <li>Stuffing boxes must be re-tightened during run-in and whenever clinker dust passage is observed</li>
+          <li>Carry spare hardfaced roller for annual replacement of most-loaded crusher roller</li>
+          <li>Keep shift book protocols for every maintenance activity</li>
+          <li>Perform all works only with plant cooled down and all safety measures in place</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>🛢</span>Lubrication Reference</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="info-row"><div class="info-label">Hydraulic system</div><div class="info-value">Mineral oil per OEM lube table in machine documentation</div></div>
+          <div class="info-row"><div class="info-label">Combination rollers</div><div class="info-value">Grease via central lubrication system</div></div>
+          <div class="info-row"><div class="info-label">Roller crusher bearings</div><div class="info-value">Grease, self-aligning roller bearings (central lubrication)</div></div>
+          <div class="info-row"><div class="info-label">Crusher gearboxes</div><div class="info-value">Gear oil — change warm after shutdown (see bevel + planetary gear doc)</div></div>
+          <div class="info-row"><div class="info-label">Oil change warning</div><div class="info-value">Hot oil — wear protective gloves and goggles; dispose per environmental regulations</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- 07 EFFICIENCY ENHANCEMENT -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<section id="efficiency" class="section">
+  <div class="section-hero">
+    <div class="section-icon">💡</div>
+    <div class="section-title">
+      <h2>Efficiency Enhancement Roadmap</h2>
+      <p>Targeted recommendations for improving thermal recovery, equipment availability, and operational stability of the PYROFLOOR® PFC 650 A.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:20px;" id="eff-grid"></div>
+
+  <div class="card">
+    <div class="card-title"><span>📊</span>Key Performance Indicators to Track</div>
+    <div class="grid-4">
+      <div class="stat-tile">
+        <div class="stat-value" style="font-size:18px;">q<sub>spec</sub></div>
+        <div class="stat-unit">kcal/kg clinker</div>
+        <div class="stat-label">Specific Heat Input<br><span style="color:var(--ash);font-size:10px;">Target: minimise</span></div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value" style="font-size:18px;">T<sub>2air</sub></div>
+        <div class="stat-unit">°C</div>
+        <div class="stat-label">Secondary Air Temp<br><span style="color:var(--ash);font-size:10px;">Target: maximise</span></div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value" style="font-size:18px;">T<sub>cl,out</sub></div>
+        <div class="stat-unit">°C</div>
+        <div class="stat-label">Clinker Outlet Temp<br><span style="color:var(--ash);font-size:10px;">Target: ≤65°C+Tamb</span></div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-value" style="font-size:18px;">η<sub>rec</sub></div>
+        <div class="stat-unit">%</div>
+        <div class="stat-label">Recuperation Efficiency<br><span style="color:var(--ash);font-size:10px;">Target: ≥ 75%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────
+const SUBSYSTEMS = [
+  { icon: '🏠', name: 'Housing Bottom Section', role: 'Structural base, air chambers, cylinder mounts',
+    desc: 'Longitudinal girders with supports and sheet enclosure. Houses connection sockets for cooling air blowers, clinker crusher, chamber walls, and brackets. Sub-divided by chamber walls into ventilation sections supplied by individual fans.',
+    tags: ['chamber-walls','clinker-crusher','bricklining-support'] },
+  { icon: '🔲', name: 'Housing Top Section', role: 'Clinker inlet, waste air, kiln interface',
+    desc: 'Comprises inlet section, central section, waste air section and end section. Contains the kiln-head interface, refractory lining, and bricklined walls. Inspection windows and poking holes are installed here. Seal to kiln head must be checked every 6 months.',
+    tags: ['inlet-section','waste-air','refractory-lining','seal-to-kiln'] },
+  { icon: '📋', name: 'Static Screen', role: 'Inclined inlet zone with fixed grate plates',
+    desc: 'Fixed inclined grate at the kiln discharge end. A permanent resting clinker layer of cooled material lies on it, protecting grate plates from abrasive and thermal wear. Transversal seal at the static screen / thrust grate transition prevents clinker from falling into the bottom section.',
+    tags: ['fixed-grate','autogenous-protection','transversal-seal'] },
+  { icon: '🚂', name: 'Grate Lanes (Thrust Grate)', role: 'Moving floor — clinker transport mechanism',
+    desc: 'Multiple movable lanes with sub-structures, bridges, combination roller bearings, and ventilation cassettes. Each lane is individually driven by its own hydraulic cylinder pair (pull configuration). Lanes group into 3 groups for sequenced return strokes. Longitudinal seals prevent clinker passage between adjacent lanes.',
+    tags: ['combination-rollers','cassettes','longitudinal-seal','hydraulic-cylinder'] },
+  { icon: '💧', name: 'Flow Regulators', role: 'Pressure-differential aeration control per cassette',
+    desc: 'Installed on underside of cassettes in the recuperation zone. Self-regulating: when bed height drops, differential pressure p1-p2 rises, lifting the plate and reducing the effective orifice, maintaining constant volumetric air flow. 8 standard sizes from 500 to 2,250 Nm³/h.',
+    tags: ['500–2250 Nm³/h','spring-mechanism','8-sizes','p1-p2-regulation'] },
+  { icon: '⚙', name: 'Hydraulic Drive', role: 'Lane motion — hydraulic cylinders + HPU',
+    desc: 'Complete hydraulic system: tank, motor-pump sets, all directional and shut-off valves, control cabinet, connection hoses and pipelines, and way pick-ups (position encoders) on each cylinder. Controlled by dedicated Hydraulic PLC, coordinated by PFCC.',
+    tags: ['HPU','way-pick-ups','directional-valves','PLC-controlled'] },
+  { icon: '🎯', name: 'Roller Crusher', role: '4-roller clinker comminution at cooler exit',
+    desc: '4 rollers with crushing rings, each driven by a spur gear motor with planetary gearbox. Rollers 1–3 run in clinker flow direction; roller 4 counter-direction. Current monitoring triggers reversing operation at 64% rated current. Self-aligning roller bearings with central grease lubrication and resistance thermometer monitoring.',
+    tags: ['4-rollers','planetary-gearbox','reversing-operation','central-lube'] },
+  { icon: '💨', name: 'Air-Jet Systems', role: 'Inlet shaft anti-accretion pulse cleaning',
+    desc: 'Located at the inlet shaft. Pulse-type compressed-air blast dislodges accretions ("fungus") from refractory walls. System includes compressed-air tank, filling and shut-off valves, rapid-emptying valve, hot nozzle of heat-resistant cast steel, and control/monitoring equipment.',
+    tags: ['pulse-cleaning','compressed-air','accretion-removal','inlet-shaft'] },
+];
+
+const FAULTS = [
+  // HYDRAULIC
+  { id:'HYD-01', cat:'hydraulic', sev:'critical', title:'Hydraulic Oil Contamination / Water Ingress',
+    sub:'Hydraulic System', sevCode:'C',
+    causes:['Condensation during extended standstill','Cooler seal leakage into oil tank','Failed return-line filtration','Inadequate reservoir sealing'],
+    symptoms:['Milky or discoloured oil appearance','Erratic cylinder velocity control','Valve spool stiction and sticking','Premature pump and valve wear','Cavitation noise from pump'],
+    actions:['Sample and analyse oil for water content before every restart after standstill','Drain and refill hydraulic tank if water detected','Replace oil filter inserts and check filter housing seals','Inspect tank breather and return-line connections','Verify reservoir temperature and condensation risk','Implement offline filtration / dehumidification system'] },
+
+  { id:'HYD-02', cat:'hydraulic', sev:'high', title:'Hydraulic Cylinder Seal Failure',
+    sub:'Hydraulic Drive', sevCode:'H',
+    causes:['Abrasive clinker dust entering cylinder rod area','Seal degradation from thermal cycling','Side loading from misaligned lane scaffolding','Excessive stroke frequency'],
+    symptoms:['External oil leakage on cylinder rod','Loss of cylinder thrust force','Grate lane not reaching forward stroke end position','Unequal lane advance distances','Oil level drop in HPU tank'],
+    actions:['Inspect all cylinders for rod seal leakage during daily rounds','Replace rod seals per manufacturer schedule','Check and restore lane alignment — cylinders must be in pure tension','Monitor oil level and top up within 24 h if low','Reduce stroke frequency if thermal load is high','Verify way-pick-up readings to confirm stroke completion'] },
+
+  { id:'HYD-03', cat:'hydraulic', sev:'high', title:'Oil Filter Blockage',
+    sub:'Hydraulic System', sevCode:'H',
+    causes:['Extended filter service interval','High system contamination after repair','Particulate ingress via breather','Varnish build-up in high-temperature operation'],
+    symptoms:['High differential pressure across filter','Pump cavitation and noise','Reduced cylinder speed','Hydraulic PLC fault alarm (filter bypass)'],
+    actions:['Check filter inserts every 3 months','Replace on high differential pressure alarm — do not bypass','Flush system if contamination is severe','Use only OEM-specified filter elements','Investigate ingress path if filter loads rapidly'] },
+
+  { id:'HYD-04', cat:'hydraulic', sev:'medium', title:'Directional Valve Malfunction',
+    sub:'Hydraulic Drive', sevCode:'M',
+    causes:['Oil contamination causing spool stiction','Solenoid coil failure','Hydraulic PLC output failure','Signal cable damage from heat'],
+    symptoms:['Lane motion freezes in mid-stroke','PLC fault code on lane valve','No cylinder movement on advance or return command','Adjacent lanes completing stroke while one remains stationary'],
+    actions:['Verify PLC output signal to solenoid','Test solenoid coil resistance (OEM spec)','Clean valve spool if contamination confirmed','Replace solenoid coil or full valve assembly','Check cable routing — heat shield if near hot surfaces'] },
+
+  // MECHANICAL
+  { id:'MEC-01', cat:'mechanical', sev:'critical', title:'Combination Bearing Roller Failure',
+    sub:'Grate Lanes', sevCode:'C',
+    causes:['Lubricant starvation — central lube system fault','Overload from clinker packing under lane','Roller flat from hot clinker contact','Misalignment of supporting module on rail'],
+    symptoms:['Abnormal noise and grinding from grate area','Increased hydraulic pressure on affected lane','Lane misalignment and skewed travel','Visible roller damage on inspection','Grate bottom heating at bearing location'],
+    actions:['Verify central lubrication system function at each shift','Inspect rollers annually during planned shutdowns','Replace damaged rollers and check rail alignment','Check supporting module fastening screws','Reduce stroke amplitude if clinker packing is suspected','Align lane scaffolding per assembly measurement protocol'] },
+
+  { id:'MEC-02', cat:'mechanical', sev:'high', title:'Transversal Seal Wear / Clinker Bypass',
+    sub:'Grate / Static Screen Interface', sevCode:'H',
+    causes:['Abrasive clinker gradually wearing seal strips','Spring fatigue — reduced contact force','Clinker impaction behind seal strip','Thermal expansion of static screen'],
+    symptoms:['Visible clinker passage at static screen / thrust grate transition','Increased clinker in housing bottom section','Hot spots below transversal seal location','Seal strip gap observed during inspection'],
+    actions:['Daily: visually monitor clinker passage at seal transition','Annually: check spring condition and seal strip wear','Replace seal strips and springs at planned shutdown','Clean clinker packing from behind seal','Measure seal contact pressure — OEM min spec'] },
+
+  { id:'MEC-03', cat:'mechanical', sev:'high', title:'Longitudinal Seal Failure',
+    sub:'Adjacent Lane Sealing', sevCode:'H',
+    causes:['Differential thermal expansion between adjacent lanes','Wear from relative lane motion','Loose fastening screws','Foreign material (oversize clinker) jamming seal'],
+    symptoms:['Clinker visible passing between adjacent lanes','Fine dust in housing bottom section','Increased under-floor clinker accumulation','Unusual sound during lane return stroke'],
+    actions:['Daily: inspect for clinker passage between lanes','Annually: check wear, condition, and fastening','Replace seal elements at planned shutdown','Inspect fastening screws — re-tighten per torque spec','Ensure lane alignment within specified tolerances'] },
+
+  { id:'MEC-04', cat:'mechanical', sev:'medium', title:'Cassette Clogging / Air-Gap Blockage',
+    sub:'Ventilation Cassettes', sevCode:'M',
+    causes:['Fine clinker entering ventilation slots','Clinker dust sintering in hot spots','Insufficient cooling air causing thermal paste','Accretion build-up over time'],
+    symptoms:['Increased under-cassette temperature','High chamber pressure with reduced air flow','Grate plate temperature approaching alarm limit','Non-uniform clinker bed cooling visible on IR scan'],
+    actions:['Clean cassette air slots before each restart (cold start prep)','Inspect and clean clogged slots annually','Replace deformed or damaged cassettes','Check flow regulator function — blocked cassette may indicate FR failure','Ensure adequate clinker cover (autogenous protection layer)'] },
+
+  // THERMAL
+  { id:'THM-01', cat:'thermal', sev:'critical', title:'Refractory Lining Damage / Hot Spot',
+    sub:'Housing / Refractory', sevCode:'C',
+    causes:['Thermal shock from plant trips','Mechanical impact during maintenance','Alkali attack on refractory','Age-related spalling and brick loosening'],
+    symptoms:['External housing surface temperature >200 °C locally','Red-glowing hot spot visible on housing shell','Refractory chunks falling inside cooler','Increased heat radiation from cooler walls'],
+    actions:['IMMEDIATELY reduce throughput or stop kiln if wall break-through risk','Inspect refractory condition via inspection windows with full PPE','Do NOT open manholes until plant cooled','Schedule emergency refractory patch at next possible shutdown','Mark hot spot location and monitor temperature trend','Consult Humboldt Wedag for repair specification'] },
+
+  { id:'THM-02', cat:'thermal', sev:'critical', title:'Grate Plate Overtemperature',
+    sub:'Grate Lanes', sevCode:'C',
+    causes:['Loss of autogenous clinker protection layer','Fan trip — air supply failure','Clinker-free zone on grate (uneven distribution)','Kiln snowman / lumpy clinker blocking air passage'],
+    symptoms:['Grate plate temperature sensor alarm >150 °C','Trip >250 °C — automatic shutdown initiated','Localised glowing visible through inspection glass','Deformed or cracked cassettes on post-trip inspection'],
+    actions:['Restart fan immediately if trip cause is resolved','Increase stroke frequency to redistribute clinker bed','Check all cooling air fan blade settings','Inspect and replace deformed cassettes','Verify autogenous clinker layer coverage — minimum depth before restart','Clear kiln snowman if this is the root cause'] },
+
+  { id:'THM-03', cat:'thermal', sev:'high', title:'Red River — Glowing Clinker Flow',
+    sub:'Clinker Distribution', sevCode:'H',
+    causes:['Kiln upset generating very hot or liquid clinker','Insufficient cooling capacity in inlet zone','Poor clinker distribution — channelling','Extreme kiln feed rate surge'],
+    symptoms:['Bright orange/red clinker stream visible at discharge','High secondary air temperature','Cooler outlet clinker temperature above target','Abnormal kiln hood pressure'],
+    actions:['Activate Red River Combat Control Mode (automatic in PFCC)','Increase all fan capacities immediately','Reduce kiln feed rate','Increase grate speed — maximise transport','Monitor secondary air temperature — protect preheater','Document event for process investigation'] },
+
+  // AERATION
+  { id:'AER-01', cat:'aeration', sev:'high', title:'Flow Regulator Failure (Spring or Plate)',
+    sub:'Flow Regulators', sevCode:'H',
+    causes:['Spring fatigue or breakage at preload position','Plate corrosion and jamming on axle','High-temperature oxidation of spring','Clinker intrusion into regulator housing'],
+    symptoms:['Uncontrolled air volume — surging or collapsing air column','Air-clinker fountain on static screen','Uneven pressure distribution per row','Under-cassette temperature increase on affected cassettes'],
+    actions:['Annually: inspect all flow regulators — spring, plate, axle wear','Replace failed FR at planned shutdown (cannot be done online)','Select correct replacement FR size per process flowsheet','After replacement, re-tune blower setpoints for that chamber','Monitor cassette temperatures closely after repair'] },
+
+  { id:'AER-02', cat:'aeration', sev:'medium', title:'Blower / Fan Performance Degradation',
+    sub:'Aeration System', sevCode:'M',
+    causes:['Fan impeller erosion from clinker dust','Blade angle drift (variable pitch fans)','Motor bearing wear reducing speed','Belt slip if belt-driven','Air leakage in duct between fan and cooler'],
+    symptoms:['Reduced chamber pressure despite full blade opening','Higher than expected clinker outlet temperature','Insufficient secondary air temperature','Increased grate plate temperatures'],
+    actions:['Check and calibrate blade pitch setting','Inspect impeller for erosion and rebalance if necessary','Check motor and fan bearing temperatures','Inspect ducts for air leakage — tighten flanges','Consider impeller upgrade to erosion-resistant material'] },
+
+  { id:'AER-03', cat:'aeration', sev:'medium', title:'Air-Clinker Fountain (Blow-Through)',
+    sub:'Static Screen / Aeration', sevCode:'M',
+    causes:['Thin clinker bed in recuperation zone','Oversized flow regulators for actual bed condition','Excessive chamber pressure','Kiln feed instability creating bed gaps'],
+    symptoms:['Pulsating clinker ejection visible through inspection glass','Uneven clinker distribution on static screen','High secondary air temperature spikes','Pressure hammer events at inlet'],
+    actions:['Reduce blower capacity in affected chamber temporarily','Increase grate advance speed to build bed depth','Install smaller-orifice flow regulators at next shutdown (per OEM selection chart)','Stabilise kiln feed rate','Record location for FR modification plan'] },
+
+  // CRUSHER
+  { id:'CRU-01', cat:'crusher', sev:'high', title:'Roller Crusher Overload / Jamming',
+    sub:'Roller Crusher', sevCode:'H',
+    causes:['Oversize clinker lump exceeding crusher design','Metallic contamination from kiln refractory bricks','Soft zone on crushing rings','Loss of reversing logic in control'],
+    symptoms:['Motor current exceeding 64% rated — reversing triggered','Crusher alarm — excessive reversing cycles in t3 window','Rollers stopping — trip if ≥2 rollers out','Abnormal mechanical noise','High motor temperature'],
+    actions:['Verify reversing counter parameters t1, t2, t3 in PLC','Investigate clinker source if jams are frequent','Inspect bar screen for oversized gaps allowing large lumps through','Inspect crushing rings for wear — hardface or replace','Check kiln for metallic debris from refractory damage','If ≥2 rollers fail: stop crusher and clear obstruction manually after LOTO'] },
+
+  { id:'CRU-02', cat:'crusher', sev:'medium', title:'Crushing Ring Wear',
+    sub:'Roller Crusher', sevCode:'M',
+    causes:['Normal abrasive wear from clinker','Insufficient hardfacing hardness','Excessive crusher operation at high current','Hard minerals (quartz, feldspar) in raw mix'],
+    symptoms:['Reduced crushing efficiency — oversized clinker to discharge transport','Increasing motor current to achieve same throughput','Visible edge rounding on crushing rings at inspection','Downstream conveyor overload from coarse material'],
+    actions:['Inspect crushing rings annually','Hardface worn areas: buffer layer + 1–2 hard overlay layers at edges','Keep hardfaced spare roller ready for annual swap','Replace roller with the highest cumulative load first','Maintain OEM specified hardfacing specification'] },
+
+  { id:'CRU-03', cat:'crusher', sev:'medium', title:'Crusher Bearing Overtemperature',
+    sub:'Roller Crusher', sevCode:'M',
+    causes:['Central lubrication system fault','Grease starvation to self-aligning roller bearings','Overload from excessive crushing force','Contaminated grease'],
+    symptoms:['Bearing temperature alarm from resistance thermometer','Bearing noise — grinding or squealing','Motor current elevated on affected roller','Bearing damage visible on inspection'],
+    actions:['Check central lubrication pump operation and grease level','Verify lubrication line to each roller bearing not blocked','Check grease quality — replace if contaminated','Reduce stroke and throughput temporarily','Replace bearing at next shutdown if temperature alarm repeats','Use OEM-specified grease grade'] },
+
+  // INSTRUMENTATION
+  { id:'INS-01', cat:'instrumentation', sev:'high', title:'Radar Sensor Fouling / Failure',
+    sub:'Measuring Systems', sevCode:'H',
+    causes:['Dust fouling inside horn antenna despite protection air','Protection air supply failure','Thermal damage to antenna extension','Moisture in protection air purge'],
+    symptoms:['Erratic or fixed clinker bed height reading','PFCC loss of bed height signal — manual mode forced','Radar failure alarm in PFCC','Incorrect automatic transport control — under or over-transporting'],
+    actions:['Check protection-air supply to radar system — verify purge flow','Clean horn antenna if accessible (plant stopped)','Verify antenna extension mounting and support integrity','Replace sensor head if internal damage confirmed','Maintain dry and filtered protection air (condensation risk)','Calibrate after replacement'] },
+
+  { id:'INS-02', cat:'instrumentation', sev:'medium', title:'Pressure Sensor Drifting / Failure',
+    sub:'Measuring Systems', sevCode:'M',
+    causes:['Clinker dust blocking pressure tapping line','Thermal drift of sensor element','Loose fitting or kinked connection hose','Vibration damage to sensor body'],
+    symptoms:['Aeration control using incorrect pressure setpoint','Chamber pressure reading deviating from process expectation','PFCC aeration alarm or diagnostic warning','Manual inspection shows different actual condition vs measured'],
+    actions:['Blow clear pressure tapping lines at each shutdown','Verify connection hose routing — flexible loop required for lane motion','Replace drifted sensors','Calibrate against calibrated reference instrument','Ensure flex-line loop length is sufficient for full lane stroke'] },
+
+  // REFRACTORY
+  { id:'REF-01', cat:'refractory', sev:'critical', title:'Suspended Ceiling / Brick Fall',
+    sub:'Housing Refractory', sevCode:'C',
+    causes:['Age-related bond failure','Thermal cycling fatigue','Mechanical shock from inside cooler','Water penetration from leaks'],
+    symptoms:['Noise of material falling inside cooler','Large debris on grate visible at inspection glass','Sudden change in cooler aerodynamics','Hot spot on housing top section'],
+    actions:['STOP plant — do not enter until fully cooled','Complete LOTO including air-jet pressurisation','Inspect with adequate lighting and PPE after cool-down','Remove loose brickwork per safe working procedure','Notify Humboldt Wedag for repair specification','Avoid shocks during all maintenance activities'] },
+];
+
+const RPM_DATA = [
+  { id:'HYD-01', mode:'Oil Contamination', sys:'Hydraulic', sev:9, occ:5, det:4, effects:'Valve failure, pump seizure, lane motion loss' },
+  { id:'HYD-02', mode:'Cylinder Seal Failure', sys:'Hydraulic', sev:8, occ:5, det:4, effects:'Oil leak, lane stroke incomplete' },
+  { id:'HYD-03', mode:'Oil Filter Blockage', sys:'Hydraulic', sev:7, occ:6, det:3, effects:'Cavitation, reduced cylinder speed' },
+  { id:'MEC-01', mode:'Bearing Roller Failure', sys:'Mechanical', sev:9, occ:4, det:5, effects:'Lane seizure, unplanned shutdown' },
+  { id:'THM-01', mode:'Refractory Hot Spot', sys:'Thermal', sev:10, occ:4, det:4, effects:'Housing breach, personnel hazard, fire' },
+  { id:'THM-02', mode:'Grate Plate Overtemperature', sys:'Thermal', sev:9, occ:5, det:2, effects:'Cassette deformation, trip, production loss' },
+  { id:'THM-03', mode:'Red River Event', sys:'Thermal', sev:9, occ:3, det:4, effects:'Clinker runaway, downstream damage' },
+  { id:'AER-01', mode:'Flow Regulator Spring Failure', sys:'Aeration', sev:7, occ:5, det:6, effects:'Air-clinker fountain, uneven cooling' },
+  { id:'CRU-01', mode:'Crusher Jamming', sys:'Crusher', sev:8, occ:5, det:3, effects:'Production stop, motor overload' },
+  { id:'CRU-02', mode:'Crushing Ring Wear', sys:'Crusher', sev:6, occ:7, det:5, effects:'Coarse clinker to conveyor, transport overload' },
+  { id:'MEC-02', mode:'Transversal Seal Wear', sys:'Mechanical', sev:7, occ:7, det:5, effects:'Clinker bypass to bottom section' },
+  { id:'INS-01', mode:'Radar Sensor Failure', sys:'Instrumentation', sev:8, occ:4, det:3, effects:'Manual operation, incorrect bed control' },
+  { id:'REF-01', mode:'Suspended Ceiling Fall', sys:'Refractory', sev:10, occ:3, det:5, effects:'Personnel injury, major shutdown' },
+  { id:'AER-02', mode:'Fan Performance Loss', sys:'Aeration', sev:7, occ:5, det:4, effects:'Insufficient cooling, high clinker outlet temp' },
+  { id:'MEC-03', mode:'Longitudinal Seal Failure', sys:'Mechanical', sev:6, occ:6, det:5, effects:'Clinker between lanes, bottom section fill' },
+  { id:'HYD-04', mode:'Directional Valve Fault', sys:'Hydraulic', sev:7, occ:4, det:3, effects:'Lane freezes in position' },
+];
+
+const PM_BLOCKS = [
+  { period:'Daily', title:'Daily Operational Checks', items:[
+    { icon:'🔊', text:'Listen for abnormal noise from grate, crusher, and fan drives' },
+    { icon:'🔍', text:'Visual check: closed doors, covers, and inspection openings' },
+    { icon:'📳', text:'Monitor for abnormal vibrations — note any changes in character' },
+    { icon:'💧', text:'Inspect hydraulic system: oil level, leakages, pressure and temperature readings' },
+    { icon:'🌡', text:'Check grate plate temperatures — ensure below 150 °C alarm threshold' },
+    { icon:'🔌', text:'Check all monitoring/measuring systems are functioning correctly (radar, temp, pressure)' },
+    { icon:'🧱', text:'Inspect refractory lining — check for local overheating of housing shell' },
+    { icon:'🔩', text:'Look for loose screw unions, emerging clinker dust, or oil stains' },
+    { icon:'📏', text:'Check transversal seal: clinker passage at static screen / grate transition' },
+    { icon:'📋', text:'Record all findings in shift book — escalate abnormal conditions immediately' },
+  ]},
+  { period:'Every 3 Months', title:'Quarterly Maintenance', items:[
+    { icon:'🔽', text:'Check hydraulic oil filter inserts — replace if differential pressure elevated' },
+    { icon:'🛢', text:'Inspect hydraulic oil quality — check for contamination or discolouration' },
+    { icon:'📡', text:'Functional check of all sensors (radar, temperature, pressure)' },
+    { icon:'💧', text:'Check all air and hydraulic line connections for seeping leakages' },
+    { icon:'🔩', text:'Inspect and re-tighten dynamically loaded screws on active structures' },
+  ]},
+  { period:'Every 6 Months', title:'Semi-Annual Inspection', items:[
+    { icon:'🔲', text:'Check tightness of seal between cooler housing and kiln head' },
+    { icon:'📡', text:'Full calibration of radar sensors and pressure transducers' },
+    { icon:'🌡', text:'Thermographic survey of housing shell — map refractory condition' },
+    { icon:'🔵', text:'Check protection air system for radar sensors — pressure and moisture' },
+    { icon:'🔩', text:'Inspect all screw unions in accessible areas' },
+  ]},
+  { period:'Annual (Planned Shutdown)', title:'Annual Shutdown Inspection', items:[
+    { icon:'🔧', text:'Full inspection of grate lanes: bearing rollers, alignment, screw unions, lubrication' },
+    { icon:'⚙', text:'Inspect all drive cylinders: functioning, alignment, screw unions, leakages' },
+    { icon:'📋', text:'Inspect all cassettes for wear, deformation, fastening, and air-gap clogging' },
+    { icon:'🔩', text:'Inspect static screen: wear, deformation, fastening, and clogging' },
+    { icon:'🏗', text:'Check chamber walls for required gap measures (air-tightness)' },
+    { icon:'🔁', text:'Inspect flow regulators: functioning, spring condition, wear, fastening' },
+    { icon:'🔒', text:'Inspect transversal and longitudinal seals: wear, springs, functioning, fastening' },
+    { icon:'🛢', text:'Oil change on crusher gearboxes (bevel + planetary) while warm' },
+    { icon:'🔨', text:'Inspect crushing rings — hardface worn areas; swap in spare hardfaced roller' },
+    { icon:'🔵', text:'Check bar screen wear and gap widths; verify clinker crusher hammer clearance' },
+    { icon:'🧱', text:'Full refractory inspection — report damage, plan repair' },
+    { icon:'📊', text:'Full hydraulic system inspection per separate hydraulic documentation' },
+    { icon:'📋', text:'Re-tighten all screw unions and verify locking elements' },
+  ]},
+  { period:'Every 2 Years', title:'Biennial Overhaul', items:[
+    { icon:'🔵', text:'Full general inspection of hydraulic system — includes valve bench testing' },
+    { icon:'🔧', text:'General inspection of combination bearing rollers — check race and roller condition' },
+    { icon:'🔁', text:'General inspection of transversal and longitudinal seals — dimensional check' },
+    { icon:'🔩', text:'Comprehensive screw union check across entire cooler structure' },
+    { icon:'📊', text:'Performance measurement and benchmark vs. commissioning baseline' },
+  ]},
+];
+
+const EFF_ITEMS = [
+  { icon:'🌡', type:'orange', title:'Optimise Clinker Bed Height Control',
+    desc:'Maintaining 600–800 mm bed height is critical. Too thin → thermal damage and air-clinker fountains. Too deep → excessive transport power and uneven cooling.',
+    tips:['Fine-tune PFCC radar setpoints per seasonal kiln feed variability','Use bed height 3D profile display to identify channelling zones','Adjust per-lane stroke length and frequency independently for uniform profile','Verify radar calibration every 6 months'] },
+  { icon:'💨', type:'cyan', title:'Recuperation Zone Aeration Optimisation',
+    desc:'Secondary air temperature above 800–1000 °C is directly linked to kiln specific heat consumption. The recuperation zone fans (chambers 1–3) must deliver correct air volumes to flow regulators.',
+    tips:['Run recuperation fans at 85–90% capacity as per OEM baseline','Trend secondary air temperature — reduce if <800 °C vs blower energy','Replace flow regulators with correct-size variants if air-clinker fountains occur','Monitor and minimise waste air temperature — lost heat = lost efficiency'] },
+  { icon:'🔄', type:'green', title:'Advance/Return Stroke Parameter Tuning',
+    desc:'The PFCC transport controller adjusts stroke length (80–350 mm) and frequency (0–10 str/min) per lane. Proper tuning reduces back-mixing and distributes residence time uniformly.',
+    tips:['Use PFCC Diagnostic Toolbox (Online System Monitor) for stroke s=f(t) analysis','Tune controller for symmetric lane advance — avoid dominant lane effect','Leverage per-lane tuning for differential wear or clinker size zones','Log pre/post modification: throughput, secondary air T, clinker outlet T'] },
+  { icon:'🔩', type:'gold', title:'Predictive Maintenance — Hydraulic Health',
+    desc:'Hydraulic system degradation directly impacts lane motion accuracy, which cascades to clinker bed uniformity and cooling efficiency.',
+    tips:['Implement oil condition monitoring (particle count, water ppm, viscosity)','Vibration monitoring on HPU pump and motor — detect bearing wear early','Pressure-trend logging on each lane cylinder — detect seal creep before failure','Deploy thermal camera quarterly on HPU and valve manifold — hot spots signal faults'] },
+  { icon:'🌊', type:'orange', title:'Cooling Zone Fan Cascade Optimisation',
+    desc:'Rear chambers (no flow regulators) require different control logic. Over-aeration wastes energy; under-aeration produces hot clinker that damages downstream transport.',
+    tips:['Tune rear fan cascade based on clinker outlet temperature trending','Reduce rear fan power at lower kiln throughput (variable speed drives)','Implement waste air temperature feedback loop to auto-adjust fan blades','Balance over-cooling penalty vs. heat-recovery opportunity'] },
+  { icon:'📡', type:'cyan', title:'Sensor Redundancy & PFCC Data Quality',
+    desc:'PFCC decisions are only as good as the data. Systematic sensor maintenance and calibration directly improves automatic control quality and reduces manual interventions.',
+    tips:['Install redundant pressure sensors on critical compartments','Schedule radar protection-air flow checks weekly — fouling is invisible','Cross-correlate radar height with pressure sensor readings for consistency','Export PFCC Diagnostic Data Archive monthly for trending analysis'] },
+  { icon:'🧱', type:'green', title:'Refractory Life Extension',
+    desc:'Refractory degradation is the most costly maintenance event. Thermographic monitoring enables early detection before thermal break-through.',
+    tips:['Monthly thermographic scan of housing exterior — establish baseline and trend','Address localised hot spots immediately — small repair vs. major failure','Optimise kiln operation to avoid thermal shocks to cooler refractory','Maintain correct refractory quality matching the zone thermal load specification'] },
+  { icon:'🔨', type:'gold', title:'Roller Crusher Productivity',
+    desc:'The crusher limits cooler discharge rate when rings wear or when feed is oversized. Proactive ring management prevents production bottlenecks.',
+    tips:['Keep one spare hardfaced roller — zero lead time for annual swap','Monitor cumulative motor current per roller as wear proxy','Inspect bar screen gap annually — maintain design clearance to crusher hammers','Track reversing operation frequency in PLC — increasing trend = ring wear'] },
+];
+
+// ─── BUILD UI ──────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function toggleSubsys(card) {
+  const body = card.querySelector('.subsys-body');
+  body.classList.toggle('open');
+  card.classList.toggle('expanded');
+}
+
+function buildSubsystems() {
+  const el = document.getElementById('subsys-list');
+  el.innerHTML = SUBSYSTEMS.map(s => `
+    <div class="subsys-card" onclick="toggleSubsys(this)">
+      <div class="subsys-header">
+        <div class="subsys-icon">${s.icon}</div>
+        <div>
+          <div class="subsys-name">${s.name}</div>
+          <div class="subsys-role">${s.role}</div>
+        </div>
+        <div style="margin-left:auto;color:var(--ash);font-size:12px;">▸</div>
+      </div>
+      <div class="subsys-body">
+        <p>${s.desc}</p>
+        <div class="tag-row">${s.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildFaults(filter='all') {
+  const el = document.getElementById('fault-library');
+  const filtered = filter === 'all' ? FAULTS : FAULTS.filter(f => f.cat === filter);
+  el.innerHTML = filtered.map(f => `
+    <div class="fault-card severity-${f.sev}" onclick="toggleFault(this)">
+      <div class="fault-header">
+        <div class="fault-sev sev-${f.sevCode.toLowerCase()}">${f.sevCode}</div>
+        <div class="fault-title">
+          <h4>${f.title}</h4>
+          <p>${f.id} · ${f.sub}</p>
+        </div>
+        <div class="fault-arrow">▸</div>
+      </div>
+      <div class="fault-body">
+        <div class="fault-grid">
+          <div>
+            <div class="fault-section-label">Root Causes</div>
+            <ul class="fault-list">${f.causes.map(c=>`<li>${c}</li>`).join('')}</ul>
+          </div>
+          <div>
+            <div class="fault-section-label">Symptoms / Signs</div>
+            <ul class="fault-list">${f.symptoms.map(s=>`<li>${s}</li>`).join('')}</ul>
+          </div>
+          <div>
+            <div class="fault-section-label">Corrective Actions</div>
+            <ul class="fault-list">${f.actions.map(a=>`<li>${a}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFault(card) {
+  card.classList.toggle('open');
+}
+
+function filterFaults(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildFaults(cat);
+}
+
+function getRPNClass(rpn) {
+  if (rpn > 400) return 'rpm-v4';
+  if (rpn > 200) return 'rpm-v3';
+  if (rpn > 100) return 'rpm-v2';
+  return 'rpm-v1';
+}
+
+function buildRPM() {
+  const tbl = document.getElementById('rpm-table');
+  const sorted = [...RPM_DATA].map(r => ({ ...r, rpn: r.sev * r.occ * r.det }))
+                               .sort((a,b) => b.rpn - a.rpn);
+  tbl.innerHTML = `
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Failure Mode</th>
+        <th>System</th>
+        <th>Effects</th>
+        <th class="rpm-cell">Severity<br>(S)</th>
+        <th class="rpm-cell">Occurrence<br>(O)</th>
+        <th class="rpm-cell">Detectability<br>(D)</th>
+        <th class="rpm-cell">RPN</th>
+        <th>Action Zone</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${sorted.map(r => {
+        const rpn = r.rpn;
+        const cls = getRPNClass(rpn);
+        const zone = rpn > 400 ? '<span class="badge badge-red">IMMEDIATE</span>'
+                   : rpn > 200 ? '<span class="badge badge-amber">PRIORITY</span>'
+                   : rpn > 100 ? '<span class="badge" style="background:rgba(201,139,26,0.2);color:#C98B1A;">PLAN</span>'
+                   : '<span class="badge badge-green">MONITOR</span>';
+        return `<tr>
+          <td><span style="font-family:JetBrains Mono,monospace;font-size:11px;color:var(--ash);">${r.id}</span></td>
+          <td style="color:var(--white);font-weight:500;">${r.mode}</td>
+          <td style="color:var(--ash);">${r.sys}</td>
+          <td style="font-size:11px;color:var(--ash);">${r.effects}</td>
+          <td class="rpm-cell"><div class="rpm-val ${cls}">${r.sev}</div></td>
+          <td class="rpm-cell"><div class="rpm-val ${cls}">${r.occ}</div></td>
+          <td class="rpm-cell"><div class="rpm-val ${cls}">${r.det}</div></td>
+          <td class="rpm-cell"><div class="rpm-val ${cls}" style="width:38px;">${rpn}</div></td>
+          <td>${zone}</td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+  `;
+}
+
+function buildPM() {
+  const el = document.getElementById('pm-timeline');
+  el.innerHTML = PM_BLOCKS.map(b => `
+    <div class="pm-block">
+      <div class="pm-period">${b.period}</div>
+      <div class="pm-card">
+        <h4>${b.title}</h4>
+        <div class="pm-items">
+          ${b.items.map(i => `<div class="pm-item"><div class="pm-item-icon">${i.icon}</div><div>${i.text}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildEfficiency() {
+  const el = document.getElementById('eff-grid');
+  el.innerHTML = EFF_ITEMS.map(e => `
+    <div class="eff-card">
+      <div class="eff-icon ${e.type}">${e.icon}</div>
+      <div class="eff-body">
+        <h4>${e.title}</h4>
+        <p>${e.desc}</p>
+        <ul>${e.tips.map(t => `<li>${t}</li>`).join('')}</ul>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── INIT ──────────────────────────────────────────────
+buildSubsystems();
+buildFaults();
+buildRPM();
+buildPM();
+buildEfficiency();
+</script>
+</body>
+</html>
